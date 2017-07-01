@@ -14,6 +14,7 @@
 //#import "vim.h"
 //#import "gui.h"
 #import <Foundation/Foundation.h>
+#import <CoreGraphics/CGBase.h>
 
 
 int const keyCAR;

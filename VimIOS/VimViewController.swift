@@ -85,8 +85,10 @@ let z_char = "z".utf8CString[0]
 let need_ime = ["zh-Hans","zh-Hant","ja-JP","ko-KR"]
 
 
-
-class VimViewController: UIViewController, UIKeyInput, UITextInputTraits{
+// Was: UIViewController
+class VimViewController: UIDocumentBrowserViewController, UIKeyInput, UITextInputTraits, UIDocumentBrowserViewControllerDelegate {
+    
+    
     var vimView: VimView?
     var hasBeenFlushedOnce = false
     var lastKeyPress = Date()
@@ -104,6 +106,35 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits{
     var activityController:UIActivityViewController?
     var ime_input = UITextField()
     
+    init() {
+        // perform some initialization here
+        self.hasBeenFlushedOnce = false
+        self.lastKeyPress = Date()
+        self.in_ime = false
+        
+        self.blink_wait = 1000
+        self.blink_on = 1000
+        self.blink_off = 1000
+        self.state = .none
+        self.ime_input = UITextField()
+        super.init(forOpeningFilesWithContentTypes: ["public.plain-text", "public.text"])
+    }
+    
+    required init?(coder decoder: NSCoder) {
+        // perform some initialization here
+        self.hasBeenFlushedOnce = false
+        self.lastKeyPress = Date()
+        self.in_ime = false
+        
+        self.blink_wait = 1000
+        self.blink_on = 1000
+        self.blink_off = 1000
+        self.state = .none
+        self.ime_input = UITextField()
+        super.init(forOpeningFilesWithContentTypes: ["public.plain-text", "public.text"])
+        // super.init(coder: decoder)
+    }
+    
     override var keyCommands: [UIKeyCommand]? {
         if self.in_ime == true{
             return [
@@ -120,7 +151,6 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits{
     //    let newPosition = sender.endOfDocument
     //    sender.selectedTextRange = sender.textRange(from: newPosition, to: newPosition)
     //}
-    
     
     func exit_ime_and_esc(_ sender:Any){
         self.exit_ime(self)
@@ -189,6 +219,7 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits{
     }
     
     override func viewDidLoad() {
+        super.viewDidLoad()
         print("DidLoad Bounds \(UIScreen.main.bounds)")
         vimView = VimView(frame: view.frame)
         vimView!.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -215,6 +246,11 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits{
         inputAssistantItem.leadingBarButtonGroups=[]
         inputAssistantItem.trailingBarButtonGroups=[]
         
+        // DocumentBrowserViewController specifics:
+        delegate = self
+        
+        allowsDocumentCreation = true
+        allowsPickingMultipleItems = true
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -659,4 +695,47 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits{
         return true
     }
     
+    // UIDocumentBrowserViewController methods
+    func documentBrowser(_ controller: UIDocumentBrowserViewController,
+                                  didRequestDocumentCreationWithHandler importHandler: @escaping (URL?, UIDocumentBrowserViewController.ImportMode) -> Void) {
+        /*
+        let doc = // Create a new UIDocument...
+        let url = // Get a temporary URL...
+            
+            // Create a new document in a temporary location
+            doc.save(to: url, for: .forCreating) { (saveSuccess) in
+                
+                // Make sure the document saved successfully
+                guard saveSuccess else {
+                    // Cancel document creation
+                    importHandler(nil, .none)
+                    return
+                }
+                
+                // Close the document.
+                doc.close(completionHandler: { (closeSuccess) in
+                    
+                    // Make sure the document closed successfully
+                    guard closeSuccess else {
+                        // Cancel document creation
+                        importHandler(nil, .none)
+                        return
+                    }
+                    
+                    // Pass the document's temporary URL to the import handler.
+                    importHandler(url, .move)
+                })
+        }*/
+    }
+    
+    func documentBrowser(_ controller: UIDocumentBrowserViewController,
+                                  didImportDocumentAt sourceURL: URL,
+                                  toDestinationURL destinationURL: URL) {
+        
+    }
+    
+    func documentBrowser(_ controller: UIDocumentBrowserViewController,
+                                  failedToImportDocumentAt documentURL: URL,
+                                  error: Error?) {
+    }
 }

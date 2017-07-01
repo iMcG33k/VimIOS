@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		221E5C171E8FBA210010F82B /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 221E5C161E8FBA210010F82B /* CloudKit.framework */; };
 		464ADAD11BE1BC0700CD4D57 /* CString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 464ADAD01BE1BC0700CD4D57 /* CString.swift */; };
 		465D8D451BEA8FC0002E557C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 46BEBEF01BE0634800DF78C8 /* Assets.xcassets */; };
 		465D8D471BEA93FE002E557C /* Icon-60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 465D8D461BEA93FE002E557C /* Icon-60@3x.png */; };
@@ -82,7 +83,6 @@
 		46BEE8AB1BE090F400DF78C8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 46BEBEED1BE0634800DF78C8 /* Main.storyboard */; };
 		46BEE8AC1BE090F400DF78C8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 46BEBEF21BE0634800DF78C8 /* LaunchScreen.storyboard */; };
 		46D16C9F1BFFCDF1005B5D08 /* VimMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46D16C9E1BFFCDF1005B5D08 /* VimMainView.swift */; };
-		CE32227A1EB731A500D27B31 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE3222791EB731A500D27B31 /* CloudKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -103,6 +103,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		221E5C161E8FBA210010F82B /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		37C4B8681DDCDDDE00A34E8F /* VimIOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VimIOS.entitlements; sourceTree = "<group>"; };
 		4636C3431C83C6BC005E15A7 /* readme.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = readme.md; sourceTree = "<group>"; };
 		464ADAD01BE1BC0700CD4D57 /* CString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CString.swift; sourceTree = "<group>"; };
@@ -2766,7 +2767,6 @@
 		46BEE8A91BE090B000DF78C8 /* VimAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VimAppDelegate.swift; sourceTree = "<group>"; };
 		46BEE8F61BE09E8400DF78C8 /* VimIOS copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "VimIOS copy-Info.plist"; path = "/Users/Lars/vimIOS/VimIOS/VimIOS copy-Info.plist"; sourceTree = "<absolute>"; };
 		46D16C9E1BFFCDF1005B5D08 /* VimMainView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VimMainView.swift; sourceTree = "<group>"; };
-		CE3222791EB731A500D27B31 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2774,7 +2774,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE32227A1EB731A500D27B31 /* CloudKit.framework in Frameworks */,
+				221E5C171E8FBA210010F82B /* CloudKit.framework in Frameworks */,
 				468501D31BF6793700BFB8FF /* QuartzCore.framework in Frameworks */,
 				46BEE89E1BE06EDB00DF78C8 /* CoreGraphics.framework in Frameworks */,
 				46BEE89C1BE06ED600DF78C8 /* CoreText.framework in Frameworks */,
@@ -2799,6 +2799,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		221E5C151E8FBA210010F82B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				221E5C161E8FBA210010F82B /* CloudKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		46BC37611BE58A8A00F2784D /* resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -2825,7 +2833,7 @@
 				46BEBF081BE0634800DF78C8 /* VimIOSUITests */,
 				46BEBEE71BE0634800DF78C8 /* Products */,
 				46BEE8F61BE09E8400DF78C8 /* VimIOS copy-Info.plist */,
-				CE3222781EB731A500D27B31 /* Frameworks */,
+				221E5C151E8FBA210010F82B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -6405,14 +6413,6 @@
 			path = xxd;
 			sourceTree = "<group>";
 		};
-		CE3222781EB731A500D27B31 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				CE3222791EB731A500D27B31 /* CloudKit.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -6481,11 +6481,15 @@
 				TargetAttributes = {
 					46BEBEE51BE0634800DF78C8 = {
 						CreatedOnToolsVersion = 7.1;
-						DevelopmentTeam = 7DR9P3926Q;
+						DevelopmentTeam = VG8Z23C8YL;
 						LastSwiftMigration = 0810;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 0;
+							};
 							com.apple.Push = {
-								enabled = 1;
+								enabled = 0;
 							};
 							com.apple.iCloud = {
 								enabled = 1;
@@ -6717,7 +6721,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -6762,7 +6766,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -6781,24 +6785,27 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = VimIOS/VimIOS.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 7DR9P3926Q;
+				DEVELOPMENT_TEAM = VG8Z23C8YL;
 				GCC_PREFIX_HEADER = "${SRCROOT}/VimIOS/ios_prefix.h";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/**";
 				INFOPLIST_FILE = VimIOS/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/vim/src/xpm/x64/lib",
 					"$(PROJECT_DIR)/vim/src/xpm/x86/lib",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = gothice.VimIOS;
+				PRODUCT_BUNDLE_IDENTIFIER = "Nicolas-Holzschuch-vim";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_DISABLE_SAFETY_CHECKS = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "VimIOS/VimIOS-Bridging-Header.h";
 				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = "VimIOS/VimIOS-Bridging-Header.h";
+				TARGETED_DEVICE_FAMILY = 2;
 				USER_HEADER_SEARCH_PATHS = "/Users/Lars/vimIOS/VimIOS/**";
 			};
 			name = Debug;
@@ -6809,23 +6816,26 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = VimIOS/VimIOS.entitlements;
-				DEVELOPMENT_TEAM = 7DR9P3926Q;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = VG8Z23C8YL;
 				GCC_PREFIX_HEADER = "${SRCROOT}/VimIOS/ios_prefix.h";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/**";
 				INFOPLIST_FILE = VimIOS/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/vim/src/xpm/x64/lib",
 					"$(PROJECT_DIR)/vim/src/xpm/x86/lib",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = gothice.VimIOS;
+				PRODUCT_BUNDLE_IDENTIFIER = "Nicolas-Holzschuch-vim";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_DISABLE_SAFETY_CHECKS = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = "VimIOS/VimIOS-Bridging-Header.h";
+				TARGETED_DEVICE_FAMILY = 2;
 				USER_HEADER_SEARCH_PATHS = "/Users/Lars/vimIOS/VimIOS/**";
 			};
 			name = Release;

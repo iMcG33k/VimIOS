@@ -7,6 +7,7 @@ set guioptions-=rm
 
 set antialias
 command Share :browse save
+command Import :browse open
 command Mail :call SendAsMail()
 cmap <C-S-j> <Down>
 cmap <C-S-k> <Up>
@@ -21,3 +22,114 @@ function! SendAsMail()
 let t = expand("%:p")
     call confirm(t, "Activity")
 endfunction
+
+
+" REQUIRED. This makes vim invoke Latex-Suite when you open a tex file.
+filetype plugin indent on
+
+" IMPORTANT: win32 users will need to have 'shellslash' set so that latex
+" can be called correctly.
+set shellslash
+
+" PLUGIN:
+" set runtimepath^=~/.vim/bundle/vim-lawrencium/
+
+" IMPORTANT: grep will sometimes skip displaying the file name if you
+" search in a singe file. This will confuse Latex-Suite. Set your grep
+" program to always generate a file-name.
+set grepprg=grep\ -nH\ $*
+
+set wrap
+set linebreak
+set nolist  " list disables linebreak
+
+" Copied from Wenzel's vimrc file at https://github.com/wjakob/term-tools/blob/master/config/vimrc
+set encoding=utf-8             " use UTF-8 (default latin1)
+set autoread                   " auto-reload modified files (with no local changes)
+set confirm                    " dialog when :q, :w, :x, :wq fails
+set title                      " change terminal title
+set nostartofline              " don't move cursor when switching buffers/files
+set ttyfast                    " smoother changes
+set backspace=2                " Backspace can move back beyond the start of the insertion
+set backspace=indent,eol,start " Make backspace behave more like in other editors
+set splitbelow                 " Open splits below (more natural), :sp makes a split
+set splitright                 " Similar to the above (for vsplit)
+let mapleader=","              " Map the leader key to comma
+set nojoinspaces               " Don't insert two spaces after a period when joining lines
+
+" Control what extra information is shown
+set showmode                   " show which mode we are in
+set showcmd                    " show state of keyboard input
+set showmatch                  " show brace match
+set matchtime=2                " when writing braces, only briefly flash the opening one (200ms)
+set report=0                   " always report how many occurrences were changed by search/replace etc
+set ruler                      " show position in bottom right
+set winminheight=0             " allow to collapse down windows to their status line only
+
+" Tabs, wrapping, folding, and indentation
+set autoindent                 " automatic indentation
+set copyindent                 " copy the previous indentation on autoindenting
+set tabstop=4                  " Number of spaces that a <Tab> in the file counts for (default 8)
+set shiftwidth=4               " Number of spaces to use for each step of (auto)indent.
+set softtabstop=-1             " Disable softtabstop (reverts to shiftwidth)
+set smarttab                   " insert tabs on the start of a line according to
+" shiftwidth, not tabstop
+set textwidth=0                " no hard wrapping by default
+set foldmethod=syntax          " fold using syntax by default
+set foldminlines=4             " require a medium size to fold
+set foldnestmax=3              " max 3 fold levels for syntax/indent folding
+
+" Appearance
+set number                     " enable line numbers
+set scrolloff=3                " keep 3 lines below and above cursor
+set linebreak                  " show wrap at word boundaries
+set showbreak=\ ↪\             " prefix wrap with ↪
+
+" Autocompletion
+set wildmenu                   " completion with menu
+set wildmode=full              " show list with navigation
+set wildignore=*~,*.o,*.d,*.obj,*.class,*.pyc,*.bak,*.swp,.svn,.git,.hg,*.orig
+set suffixes=~,.o,.d,.obj,.class,.pyc,.bak,.swp,.orig
+set completeopt=menu,preview   " Completion with a menu
+
+" Searching
+set incsearch                  " incremental search
+set hlsearch                   " enable search highlighting
+
+
+" OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to
+" 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
+" The following changes the default filetype back to 'tex':
+let g:tex_flavor='latex'
+
+" statusline
+hi User1 guifg=#ffdad8  guibg=#880c0e
+hi User2 guifg=#000000  guibg=#F4905C
+hi User3 guifg=#292b00  guibg=#f4f597
+hi User4 guifg=#112605  guibg=#aefe7B
+hi User5 guifg=#051d00  guibg=#7dcc7d
+hi User7 guifg=#ffffff  guibg=#880c0e gui=bold
+hi User8 guifg=#ffffff  guibg=#5b7fbb
+hi User9 guifg=#ffffff  guibg=#810085
+hi User0 guifg=#ffffff  guibg=#094afe
+set statusline=
+set statusline+=%7*\[%n]                                  "buffernr
+set statusline+=%1*\ %<%f\                                "File+path
+set statusline+=%2*\ %y\                                  "FileType
+set statusline+=%8*\ %=\ row:%l/%L\ (%03p%%)\             "Rownumber/total (%)
+set statusline+=%9*\ col:%03c\                            "Colnr
+set statusline+=%0*\ \ %m%r%w\ %P\ \                      "Modified? Readonly? Top/bot.
+
+augroup gzip
+autocmd!
+autocmd BufReadPre,FileReadPre *.gz set bin
+autocmd BufReadPost,FileReadPost   *.gz '[,']!gunzip
+autocmd BufReadPost,FileReadPost   *.gz set nobin
+autocmd BufReadPost,FileReadPost   *.gz execute ":doautocmd BufReadPost " . expand("%:r")
+autocmd BufWritePost,FileWritePost *.gz !mv <afile> <afile>:r
+autocmd BufWritePost,FileWritePost *.gz !gzip <afile>:r
+autocmd FileAppendPre      *.gz !gunzip <afile>
+autocmd FileAppendPre      *.gz !mv <afile>:r <afile>
+autocmd FileAppendPost     *.gz !mv <afile> <afile>:r
+autocmd FileAppendPost     *.gz !gzip <afile>:r
+augroup END

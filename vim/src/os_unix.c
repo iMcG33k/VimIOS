@@ -4077,9 +4077,10 @@ mch_call_shell(cmd, options)
 	msg_putchar('\n');
     }
 # else /* not __EMX__ */
-    if (cmd == NULL)
-	x = system((char *)p_sh);
-    else
+    if (cmd == NULL) {
+        // TODO: SYSTEM unavailable
+	// x = system((char *)p_sh);
+    } else
     {
 #  ifdef VMS
 	if (ofn = strchr((char *)cmd, '>'))
@@ -4109,7 +4110,9 @@ mch_call_shell(cmd, options)
 		    extra_shell_arg == NULL ? "" : (char *)extra_shell_arg,
 		    (char *)p_shcf,
 		    (char *)cmd);
-	    x = system((char *)newcmd);
+		 fprintf(stderr, "About to call command : %s \n", newcmd);
+        // TODO: SYSTEM unavailable
+	    // x = system((char *)newcmd);
 	    vim_free(newcmd);
 	}
 #  endif

@@ -14,7 +14,7 @@
 			<key>CFBundleTypeName</key>
 			<string>Text File</string>
 			<key>LSHandlerRank</key>
-			<string>Owner</string>
+			<string>Alternate</string>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>public.text</string>
@@ -67,6 +67,12 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>UISupportsDocumentBrowser</key>
+	<true/>
+	<key>UIFileSharingEnabled</key>
+	<true/>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
@@ -1664,6 +1670,18 @@
 					<string>vba</string>
 				</array>
 			</dict>
+		</dict>
+	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>vimios.url</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>edit</string>
+				<string>vim</string>
+			</array>
 		</dict>
 	</array>
 </dict>

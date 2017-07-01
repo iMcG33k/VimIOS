@@ -1192,7 +1192,6 @@ gui_mch_browse(
 {
 //    printf("%s\n",__func__);
 
-   
     NSLog(@"title: %s", title);
     NSString *dir = [NSString stringWithFormat:@"%s", initdir];
     NSString *file = [NSString stringWithFormat:@"%s", dflt];
@@ -1200,11 +1199,20 @@ gui_mch_browse(
 
     NSLog(@"path: %@",path);
     NSURL *url = [NSURL fileURLWithPath:path];
-    
-    [getViewController() showShareSheetForURL:url mode:@"Share"];
 
+    if (strcmp(title,"Save As") == 0)
+       [getViewController() showShareSheetForURL:url mode:@"Share"];
+    else if (strcmp(title,"Edit File") == 0) {
+        // Option 1:
    // UIDocumentInteractionController *controller = [UIDocumentInteractionController interactionControllerWithURL:url];
-
+        // Option 2:
+//        UIDocumentMenuViewController *importMenu =
+//        [[UIDocumentMenuViewController alloc] initWithDocumentTypes:[self UTIs]
+//                                                             inMode:UIDocumentPickerModeImport];
+//        
+//        importMenu.delegate = self;
+//        [self presentViewController:importMenu animated:YES completion:nil];
+    }
    // 
    // 
    // int height = gui_ios.view_controller.view.bounds.size.height;
@@ -1236,6 +1244,8 @@ gui_mch_dialog(
         NSURL *url = [NSURL fileURLWithPath:path];
         
         [getViewController() showShareSheetForURL:url mode:@"Activity"];
+    } else if([bt isEqualToString:@"Import"]) {
+        
     }
     NSLog(@"Confirm title %s", title);
     NSLog(@"Confirm message %s", message);

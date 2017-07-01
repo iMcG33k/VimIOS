@@ -10,7 +10,7 @@ import UIKit
 import CoreText
 
 struct font{
-    static let name = "Menlo"
+    static let name = "Menlo-Regular"
     static let size =  CGFloat(14)
 }
 
