@@ -4110,7 +4110,8 @@ mch_call_shell(cmd, options)
 		    extra_shell_arg == NULL ? "" : (char *)extra_shell_arg,
 		    (char *)p_shcf,
 		    (char *)cmd);
-		 fprintf(stderr, "About to call command : %s \n", newcmd);
+        fprintf(stderr, "Was sent command : %s \n", cmd);
+        fprintf(stderr, "About to call command : %s \n", newcmd);
         // TODO: SYSTEM unavailable
 	    // x = system((char *)newcmd);
 	    vim_free(newcmd);
@@ -4179,6 +4180,7 @@ mch_call_shell(cmd, options)
 # endif
     int		did_settmode = FALSE;	/* settmode(TMODE_RAW) called */
 
+    fprintf(stderr, "About to call command : %s\n", cmd);
     newcmd = vim_strsave(p_sh);
     if (newcmd == NULL)		/* out of memory */
 	goto error;
@@ -4369,7 +4371,7 @@ mch_call_shell(cmd, options)
 		 * Connect stdin to /dev/null too, so ":n `cat`" doesn't hang,
 		 * waiting for input.
 		 */
-		fd = open("/dev/null", O_RDWR | O_EXTRA, 0);
+        fd = open("/dev/null", O_RDWR | O_EXTRA, 0);
 		fclose(stdin);
 		fclose(stdout);
 		fclose(stderr);
@@ -4383,15 +4385,15 @@ mch_call_shell(cmd, options)
 		 * or dup() failed we'd just do the same thing ourselves
 		 * anyway -- webb
 		 */
-		if (fd >= 0)
-		{
-		    ignored = dup(fd); /* To replace stdin  (fd 0) */
-		    ignored = dup(fd); /* To replace stdout (fd 1) */
-		    ignored = dup(fd); /* To replace stderr (fd 2) */
+        if (fd >= 0)
+        {
+            ignored = dup(fd); /* To replace stdin  (fd 0) */
+            ignored = dup(fd); /* To replace stdout (fd 1) */
+            ignored = dup(fd); /* To replace stderr (fd 2) */
 
-		    /* Don't need this now that we've duplicated it */
-		    close(fd);
-		}
+            /* Don't need this now that we've duplicated it */
+            close(fd);
+        }
 	    }
 	    else if ((options & (SHELL_READ|SHELL_WRITE))
 # ifdef FEAT_GUI
@@ -4509,7 +4511,7 @@ mch_call_shell(cmd, options)
 	     * Call _exit() instead of exit() to avoid closing the connection
 	     * to the X server (esp. with GTK, which uses atexit()).
 	     */
-	    execvp(argv[0], argv);
+        execvp(argv[0], argv);
 	    _exit(EXEC_FAILED);	    /* exec failed, return failure code */
 	}
 	else			/* parent */

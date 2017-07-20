@@ -512,6 +512,7 @@ aucmd_abort:
 	    lastbuf = buf->b_prev;
 	else
 	    buf->b_next->b_prev = buf->b_prev;
+    gui_mch_close_buf(buf->b_fname);
 	free_buffer(buf);
     }
     else
@@ -527,6 +528,7 @@ aucmd_abort:
 
 	    /* Init the options when loaded again. */
 	    buf->b_p_initialized = FALSE;
+        gui_mch_close_buf(buf->b_fname);
 	}
 	buf_clear_file(buf);
 	if (del_buf)

@@ -7,9 +7,11 @@
 //
 
 import UIKit
+
 import os.log
 
 @UIApplicationMain
+//
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
@@ -25,89 +27,41 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
     }
     
-    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:], completionHandler: ((Bool) -> Void)? = nil) {
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
         var file:String
         if (url.isFileURL) {
             // Opens file in place:
             file = url.path
         } else {
-            // Can probably remove now?
+            // Path name can contain spaces
             file = url.path.replacingOccurrences(of: " ", with: "\\ ")
         }
-        let newUrl = NSURL.fileURL(withPath: file)
-    }
-    
-    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any]) -> Bool {
-        var file:String
-        if (url.isFileURL) {
-            // Opens file in place:
-            file = url.path
-        } else {
-            // Can probably remove now?
-            file = url.path.replacingOccurrences(of: " ", with: "\\ ")
-        }
-        let newUrl = NSURL.fileURL(withPath: file)
-        // Step 1: reveal the file
-        guard let documentBrowserViewController = window?.rootViewController as? VimViewController else { return false }
+        let inputURL =  URL(fileURLWithPath: file)
         
-        documentBrowserViewController.revealDocument(at: newUrl, importIfNeeded: true) {
-            (revealedDocumentURL, error) in
-            guard error == nil else {
-                os_log("Failed to reveal the document at %@. Error: %@",
-                       log: OSLog.default,
-                       type: .error,
-                       url as CVarArg,
-                       error! as CVarArg)
-                return
-            }
-            
-            guard let revUrl = revealedDocumentURL else {
-                os_log("No URL revealed",
-                       log: OSLog.default,
-                       type: .error)
-                
-                return
-            }
-            
-            // You can do something
-            // with the revealed document here...
-            os_log("Revealed URL: %@",
-                   log: OSLog.default,
-                   type: .debug,
-                   revUrl.path)
-            // Step 2: "open" the file (documentViewController doesn't exist, so break)
-            let document = UIDocument(fileURL: newUrl)
-            document.open(completionHandler: { (success) in
-                if success {
-                    // Display the content of the document, e.g.:
-                    // self.documentNameLabel.text = self.document?.fileURL.lastPathComponent
-                } else {
-                    // Make sure to handle the failed import appropriately, e.g., by presenting an error message to the user.
-                }
-            })
-        }
+        guard inputURL.isFileURL else { return false }
+        let share = inputURL.startAccessingSecurityScopedResource()
+        if (!share) { return false }
+        let doc:UIDocument = UIDocument(fileURL: inputURL)
         // Now the file is managed by vim
         let command = "tabedit " + file
         do_cmdline_cmd(command)
-        do_cmdline_cmd("redraw!".char)
+        do_cmdline_cmd("redraw!")
         do_cmdline_cmd("map <d-c> \"*y")
         do_cmdline_cmd("map <d-v> \"*p")
         return true
-        // return false
     }
-    
     
     func VimStarter(_ url: URL?) {
         guard let vimPath = Bundle.main.resourcePath else {return}
         let runtimePath = vimPath + "/runtime"
-        vim_setenv("VIM".char, vimPath.char)
-        vim_setenv("VIMRUNTIME".char, runtimePath.char)
+        vim_setenv("VIM", vimPath)
+        vim_setenv("VIMRUNTIME", runtimePath)
         //            print("VimPath: \(vimPath)")
         //            print("VimRuntime: \(runtimePath)")
         let homeDir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
         print("homeDir: \(homeDir)")
         
-        vim_setenv("HOME".char, homeDir.char)
+        vim_setenv("HOME", homeDir)
         FileManager.default.changeCurrentDirectoryPath(homeDir)
         // vim_setenv("SHARED".char, sharedWorkingDir.char)
         // FileManager.default.changeCurrentDirectoryPath(sharedWorkingDir)
@@ -121,11 +75,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             file = filename
             numberOfArguments += 1
         }
-        
         vimHelper(Int32(numberOfArguments),file)
     }
-    
-    
     
 }
 
@@ -146,3 +97,4 @@ extension String {
     }
     
 }
+

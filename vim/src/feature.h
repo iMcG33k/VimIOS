@@ -1009,7 +1009,7 @@
  * +system		Use system() instead of fork/exec for starting a
  *			shell.  Doesn't work for the GUI!
  */
-#define USE_SYSTEM 
+#define USE_SYSTEM
 
 /*
  * +X11			Unix only.  Include code for xterm title saving and X

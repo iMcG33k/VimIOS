@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import MobileCoreServices
 
 enum blink_state {
     case none     /* not blinking at all */
@@ -84,11 +84,9 @@ let a_char = "a".utf8CString[0]
 let z_char = "z".utf8CString[0]
 let need_ime = ["zh-Hans","zh-Hant","ja-JP","ko-KR"]
 
+//
+class VimViewController: UIViewController, UIKeyInput, UIDocumentPickerDelegate, UITextInputTraits {
 
-// Was: UIViewController
-class VimViewController: UIDocumentBrowserViewController, UIKeyInput, UITextInputTraits, UIDocumentBrowserViewControllerDelegate {
-    
-    
     var vimView: VimView?
     var hasBeenFlushedOnce = false
     var lastKeyPress = Date()
@@ -105,19 +103,19 @@ class VimViewController: UIDocumentBrowserViewController, UIKeyInput, UITextInpu
     var documentController:UIDocumentInteractionController?
     var activityController:UIActivityViewController?
     var ime_input = UITextField()
+    var urls = [URL]()
     
     init() {
         // perform some initialization here
         self.hasBeenFlushedOnce = false
         self.lastKeyPress = Date()
         self.in_ime = false
-        
         self.blink_wait = 1000
         self.blink_on = 1000
         self.blink_off = 1000
         self.state = .none
         self.ime_input = UITextField()
-        super.init(forOpeningFilesWithContentTypes: ["public.plain-text", "public.text"])
+        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder decoder: NSCoder) {
@@ -125,15 +123,16 @@ class VimViewController: UIDocumentBrowserViewController, UIKeyInput, UITextInpu
         self.hasBeenFlushedOnce = false
         self.lastKeyPress = Date()
         self.in_ime = false
-        
         self.blink_wait = 1000
         self.blink_on = 1000
         self.blink_off = 1000
         self.state = .none
         self.ime_input = UITextField()
-        super.init(forOpeningFilesWithContentTypes: ["public.plain-text", "public.text"])
-        // super.init(coder: decoder)
+        // super.init(forOpeningFilesWithContentTypes: ["public.plain-text", "public.text"])
+        super.init(coder: decoder)
     }
+    
+    // MARK - VimViewController
     
     override var keyCommands: [UIKeyCommand]? {
         if self.in_ime == true{
@@ -190,9 +189,6 @@ class VimViewController: UIDocumentBrowserViewController, UIKeyInput, UITextInpu
             }
         }
     }
-
-    
-    
     
     
     override func viewWillAppear(_ animated: Bool) {
@@ -215,6 +211,23 @@ class VimViewController: UIDocumentBrowserViewController, UIKeyInput, UITextInpu
             {
                 start_ime(self)
             }
+        }
+    }
+    
+    // We release control when we move to the background
+    @objc func appMovedToBackground() {
+        // save every buffer:
+        do_cmdline_cmd("wall!")
+        // Not the usual behaviour, but a good idea since Vim can be killed/restarted
+        for item in urls {
+            item.stopAccessingSecurityScopedResource()
+        }
+    }
+    
+    @objc func appMovedToForeground() {
+        // we are back after being in the background and listen again and refresh from file
+        for item in urls {
+            item.startAccessingSecurityScopedResource()
         }
     }
     
@@ -245,19 +258,29 @@ class VimViewController: UIDocumentBrowserViewController, UIKeyInput, UITextInpu
         vimView?.addGestureRecognizer(mouseRecognizer)
         inputAssistantItem.leadingBarButtonGroups=[]
         inputAssistantItem.trailingBarButtonGroups=[]
-        
-        // DocumentBrowserViewController specifics:
-        delegate = self
-        
-        allowsDocumentCreation = true
-        allowsPickingMultipleItems = true
+        let notifications = NotificationCenter.default
+        notifications.addObserver(self, selector: #selector(appMovedToBackground),
+                                  name: Notification.Name.UIApplicationWillResignActive, object: nil)
+        notifications.addObserver(self, selector: #selector(appMovedToForeground),
+                                  name: Notification.Name.UIApplicationDidBecomeActive, object: nil)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         #if  FEAT_GUI
         //print("Hallo!")
         #endif
+        for item in urls {
+            item.startAccessingSecurityScopedResource()
+        }
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        for item in urls {
+            item.stopAccessingSecurityScopedResource()
+        }
+    }
+
     
     func click(_ sender: UITapGestureRecognizer) {
         becomeFirstResponder()
@@ -562,6 +585,66 @@ class VimViewController: UIDocumentBrowserViewController, UIKeyInput, UITextInpu
         }
     }
     
+    //MARK: - UIDocumentPickerDelegate
+    
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt newUrls: [URL]) {
+        urls.append(contentsOf: newUrls)
+        saveUrlBookmarks()
+        for fileUrl in newUrls {
+            fileUrl.startAccessingSecurityScopedResource()
+            let file = fileUrl.path
+            let command = "tabedit " + file
+            do_cmdline_cmd(command)
+            do_cmdline_cmd("redraw!")
+            do_cmdline_cmd("map <d-c> \"*y")
+            do_cmdline_cmd("map <d-v> \"*p")
+        }
+    }
+    
+    private let bookmarksDefaultsKey = "bookmarks"
+    // to be able to save and restore security scoped URL's these must be stored as bookmarks
+    func saveUrlBookmarks() {
+        var bookmarks = [Data]()
+        
+        for url in urls {
+            do {
+                let bookmark = try url.bookmarkData(options: [],
+                                                    includingResourceValuesForKeys: nil,
+                                                    relativeTo: nil)
+                bookmarks.append(bookmark)
+                
+            } catch {
+                print("\(error)")
+            }
+        }
+        // store in user defaults, since this is just a demo
+        UserDefaults.standard.set(bookmarks, forKey: bookmarksDefaultsKey)
+    }
+
+    
+    func releaseFile(_ url: URL) {
+        // print("We should release this file: ", url.path)
+        // We deleted a buffer containing a file, so we release permission
+        // This is ":bd", not ":w" which keeps the buffer in memory
+        let indexOfUrl = urls.index(of: url)
+        if (indexOfUrl == nil) { return }      // we don't have this one
+        url.stopAccessingSecurityScopedResource()
+        urls.remove(at: indexOfUrl!)
+    }
+    
+    func showFileBrowser(_ url: URL) {
+        let types = [kUTTypeText as String, kUTTypeDirectory as String]
+        let picker = UIDocumentPickerViewController(documentTypes: types, in: .open)
+        
+        picker.allowsMultipleSelection = true
+        // TODO: not supported in iOS11b3 -- coming soon 
+        // picker.allowsDocumentCreation = true
+        // Straight from the Apple documentation, not supported
+        // picker.browserInterfaceStyle = .dark // .white or .light
+        // Changing interface color changes interface behaviour(!)
+        picker.delegate = self
+        present(picker, animated: true, completion: nil)
+    }
     
     func pan(_ sender: UIPanGestureRecognizer) {
         let translation = sender.translation(in: vimView!)
@@ -695,47 +778,4 @@ class VimViewController: UIDocumentBrowserViewController, UIKeyInput, UITextInpu
         return true
     }
     
-    // UIDocumentBrowserViewController methods
-    func documentBrowser(_ controller: UIDocumentBrowserViewController,
-                                  didRequestDocumentCreationWithHandler importHandler: @escaping (URL?, UIDocumentBrowserViewController.ImportMode) -> Void) {
-        /*
-        let doc = // Create a new UIDocument...
-        let url = // Get a temporary URL...
-            
-            // Create a new document in a temporary location
-            doc.save(to: url, for: .forCreating) { (saveSuccess) in
-                
-                // Make sure the document saved successfully
-                guard saveSuccess else {
-                    // Cancel document creation
-                    importHandler(nil, .none)
-                    return
-                }
-                
-                // Close the document.
-                doc.close(completionHandler: { (closeSuccess) in
-                    
-                    // Make sure the document closed successfully
-                    guard closeSuccess else {
-                        // Cancel document creation
-                        importHandler(nil, .none)
-                        return
-                    }
-                    
-                    // Pass the document's temporary URL to the import handler.
-                    importHandler(url, .move)
-                })
-        }*/
-    }
-    
-    func documentBrowser(_ controller: UIDocumentBrowserViewController,
-                                  didImportDocumentAt sourceURL: URL,
-                                  toDestinationURL destinationURL: URL) {
-        
-    }
-    
-    func documentBrowser(_ controller: UIDocumentBrowserViewController,
-                                  failedToImportDocumentAt documentURL: URL,
-                                  error: Error?) {
-    }
 }

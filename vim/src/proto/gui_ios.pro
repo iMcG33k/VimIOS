@@ -60,6 +60,7 @@ int im_get_status __ARGS((void));
 int gui_mch_adjust_charheight __ARGS((void));
 void gui_mch_beep __ARGS((void));
 char_u * gui_mch_browse __ARGS((int saving, char_u *title, char_u *dflt, char_u *ext, char_u *initdir, char_u *filter));
+void gui_mch_close_buf(char_u *title);
 int gui_mch_dialog __ARGS((int type, char_u *title, char_u *message, char_u *buttons, int dfltbutton, char_u *textfield, int ex_cmd));
 void gui_mch_flash __ARGS((int msec));
 guicolor_T gui_mch_get_color __ARGS((char_u *name));

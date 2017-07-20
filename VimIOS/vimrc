@@ -12,6 +12,11 @@ command Mail :call SendAsMail()
 cmap <C-S-j> <Down>
 cmap <C-S-k> <Up>
 
+" store all swapfiles inside Vim's own directory (to have writing permissions...)
+set directory=~/.vim/swapfiles//
+" Save everything when we lose focus
+autocmd FocusLost * nested silent! wall
+
 set guioptions=
 set backspace=start,eol,indent
 set laststatus=2
@@ -102,6 +107,32 @@ set hlsearch                   " enable search highlighting
 " The following changes the default filetype back to 'tex':
 let g:tex_flavor='latex'
 
+" tabline from https://github.com/mkitt/tabline.vim/blob/master/plugin/tabline.vim
+function! Tabline()
+let s = ''
+for i in range(tabpagenr('$'))
+let tab = i + 1
+let winnr = tabpagewinnr(tab)
+let buflist = tabpagebuflist(tab)
+let bufnr = buflist[winnr - 1]
+let bufname = bufname(bufnr)
+let bufmodified = getbufvar(bufnr, "&mod")
+
+let s .= '%' . tab . 'T'
+let s .= (tab == tabpagenr() ? '%#TabLineSel#' : '%#TabLine#')
+let s .= ' ' . tab .':'
+let s .= (bufname != '' ? '['. fnamemodify(bufname, ':t') . '] ' : '[No Name] ')
+
+if bufmodified
+let s .= '[+] '
+endif
+endfor
+
+let s .= '%#TabLineFill#'
+return s
+endfunction
+
+
 " statusline
 hi User1 guifg=#ffdad8  guibg=#880c0e
 hi User2 guifg=#000000  guibg=#F4905C
@@ -114,11 +145,12 @@ hi User9 guifg=#ffffff  guibg=#810085
 hi User0 guifg=#ffffff  guibg=#094afe
 set statusline=
 set statusline+=%7*\[%n]                                  "buffernr
-set statusline+=%1*\ %<%f\                                "File+path
+set statusline+=%1*\ %t\                                  "File (just last filename)
 set statusline+=%2*\ %y\                                  "FileType
 set statusline+=%8*\ %=\ row:%l/%L\ (%03p%%)\             "Rownumber/total (%)
 set statusline+=%9*\ col:%03c\                            "Colnr
 set statusline+=%0*\ \ %m%r%w\ %P\ \                      "Modified? Readonly? Top/bot.
+set tabline=%!Tabline()
 
 augroup gzip
 autocmd!

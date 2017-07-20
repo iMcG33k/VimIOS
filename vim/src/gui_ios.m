@@ -161,8 +161,6 @@ void vimHelper(int argc, NSString *file)
         argc++;
     }
 
-
-
        // NSLog(@"%s", argv[1]);
     
     VimMain(argc,argv);
@@ -1200,27 +1198,25 @@ gui_mch_browse(
     NSLog(@"path: %@",path);
     NSURL *url = [NSURL fileURLWithPath:path];
 
-    if (strcmp(title,"Save As") == 0)
-       [getViewController() showShareSheetForURL:url mode:@"Share"];
-    else if (strcmp(title,"Edit File") == 0) {
-        // Option 1:
-   // UIDocumentInteractionController *controller = [UIDocumentInteractionController interactionControllerWithURL:url];
-        // Option 2:
-//        UIDocumentMenuViewController *importMenu =
-//        [[UIDocumentMenuViewController alloc] initWithDocumentTypes:[self UTIs]
-//                                                             inMode:UIDocumentPickerModeImport];
-//        
-//        importMenu.delegate = self;
-//        [self presentViewController:importMenu animated:YES completion:nil];
+    if (saving) [getViewController() showShareSheetForURL:url mode:@"Share"];
+    else {
+        [getViewController() showFileBrowser:url];
+        // we return NULL here, and will open the file in VimViewController.swift
+        // for user interface / asynchronous response reasons
     }
-   // 
-   // 
-   // int height = gui_ios.view_controller.view.bounds.size.height;
-   //
-   //[controller presentOptionsMenuFromRect:CGRectMake(0,height-10,10,10) inView:gui_ios.view_controller.view animated: NO];
-
     return NULL;
 }
+
+/* When we close a buffer that was loaded from iOS, we need to
+ release the file permissions and erase it from the list. */
+void
+gui_mch_close_buf(char_u *title)
+{
+    NSString* path = [NSString stringWithFormat:@"%s", title];
+    NSURL *url = [NSURL fileURLWithPath:path];
+    [getViewController() releaseFile:url];
+}
+
 #endif /* FEAT_BROWSE */
 
 
