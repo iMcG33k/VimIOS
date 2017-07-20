@@ -2,13 +2,14 @@
 
 *Disclaimer*: This is a side project of mine - no promises and no warranties. If you like it, feel free to let me know, and please feel free to improve on it, there is a lot to do.
 
-This project is based on the [Vim port of applidium](https://github.com/applidium/Vim), which has been inactive for a few years. Nonetheless, it is a full working port of Vim. However, in the meantime iOS has gained many features of which this port did not take advantage. I rewrote large parts of it with the goal of improving the Vim experience under iOS 9, in particular on iPads with an external keyboard. 
+This project is based on the [Vim port of applidium](https://github.com/applidium/Vim), which has been inactive for a few years. Nonetheless, it is a full working port of Vim. However, in the meantime iOS has gained many features of which this port did not take advantage. I rewrote large parts of it with the goal of improving the Vim experience under iOS 9, in particular on iPads with an external keyboard. This latest version includes "open-in-place", an iOS 11 feature.
 
 The new key features are:
 
 * Split View and Slide Over support
 * Full external keyboard support
 * Importing and exporting files from Vim to other apps is now possible. 
+* Open-in-place is now possible (open files inside other apps sandboxes)
 * The app now looks great on retina displays.
 * Upgrade to Vim 7.4
 
@@ -16,7 +17,7 @@ The new key features are:
 Obviously, I used the code of [Applidiums Vim port](https://github.com/applidium/Vim), and Vim itself. I had to make minor changes in the Vim source code a few times, so I include a modified version of the [Vim code base](https://github.com/vim/vim). Note that Vim is charity ware, see [here for the Vim license](http://vimdoc.sourceforge.net/htmldoc/uganda.html#license). The app icon was taken from [here](http://usevim.com/2014/07/25/flat-vim-icons/).
 
 ## Setup
-Clone the repository and use XCode to compile it for your iOS 9+ device. 
+Clone the repository and use XCode to compile it for your iOS 11+ device. 
 
 ## Usage
 Open the app and just start typing. If you have an external keyboard, you should be all set. If you need an escape key, or F1, longpress anywhere on the screen. This will open a tool bar with a few buttons. But instead of escape, you can also use `<C-[>`. 
@@ -24,7 +25,7 @@ Open the app and just start typing. If you have an external keyboard, you should
 You can get this help by using the command `:help ios`.
 
 ### File management.
-This version of Vim comes with a version of the netrw file browser. Use the command `e .` to start it. You will likely see the following items:
+This version of Vim comes with a version of the netrw file browser. Use the command `Explore .` to start it. You will likely see the following items:
 
 ```
 .vim/
@@ -37,13 +38,25 @@ If `.vimrc` does not exist, you can create it, if you wish.
 You can write your files anywhere, except for the `Inbox/` folder, see below.
 Use `F1` to get help on how to use the file browser. You can create directories with `d` and delete directories/files with `D'. 
 
+All swap files are in ../Documents/.vim/swapfiles (because we can't put them next to the files if we open-in-place). You will have to create the "swapfiles" folder. 
+
+The default configuration file is "vimrc", inside "VimIOS/resources" folder in the source code. If you are sideloading, it might be easier to edit it on the Mac side. 
+
+### Open-In-Place
+
+If you want to open files that are in the sandbox of another app, simply type 
+* :Import 
+It will open a document browser that lets you access files on iCloud and on your iOS device, including files in other apps sandboxes. 
+
+In reverse, you can also access files in Vim sandbox from other apps, and from iTunes. 
+
+Vim places a lock on each file as it opens it, and releases it every time the app goes in the background. To avoid surprises, all open files are saved every time the app goes in the background. Simply closing the file with `:w` does not release the lock (because Vim keeps the buffer available). If you really want to close the buffer and release the file, you have to use `:bd` (buffer delete). 
+
 ### The Inbox folder
 This is a special folder. Files imported from other applications will be saved there. **Note that you cannot save to the Inbox folder manually**. In particular, if you import a file and make changes, then you *have* to save the new file somewhere outside the Inbox folder.
 
 ### Importing files from other applications
-If you would like to edit a file in Vim that is currently in the sandbox of another application (e.g. the brilliant [Working Copy](http://workingcopyapp.com)), simply go to this app and use standard iOS dialog "Open in another app". Pick VimIOS, the file will be copied to the VimIOS sandbox, and Vim will be opened. Similarly, if you receive a text file via Airdrop, you can open it in VimIOS.
-
-**Important**: The file will be imported and saved into the directory `Inbox`. If you want to make changes to this file, you **have** to save it outside the `Inbox` directory. 
+If you wish, you can also pick ""Open in other app" from inside another application. In that case, te file will be copied to the `Inbox` folder inside the VimIOS sandbox. You will have to save it elsewhere. 
 
 ## Exporting files to other applications
 I added two commands to commands to Vim which allow you to export files.
@@ -56,5 +69,7 @@ In the `.vim` folder (create it, if it doesn't exist), you can add plugins and t
 
 You can create and customize a `.vimrc` file as usual. Some graphical features will probably not work. 
 
-## Todo:
-It would be very nice to implement the new iOS document picker feature, which would allow Vim to open files directly from the sandbox of a (compatible) app, such as several cloud storage providers. Unfortunately, this has to be implemented by someone with an Apple Developer subscription, as access to CloudKit is necessary. Also note that this would require the implementation of an at least rudimentary document management system, as the document picker extension works with the UIDocument class.
+## Todo
+* Add iOS alerts for the dialogs and popups. 
+* Add the ability to open a file from another application. Opening the "vim://path/to/file/" already starts Vim, but it doesn't get the right to access the file. 
+
