@@ -35,7 +35,7 @@ Inbox/
 ```
 If `.vimrc` does not exist, you can create it, if you wish. 
 
-You can write your files anywhere, except for the `Inbox/` folder, see below.
+You can write your files anywhere inside the "Documents" folder, except for the `Inbox/` folder.
 Use `F1` to get help on how to use the file browser. You can create directories with `d` and delete directories/files with `D'. 
 
 All swap files are in ../Documents/.vim/swapfiles (because we can't put them next to the files if we open-in-place). You will have to create the "swapfiles" folder. 
@@ -52,11 +52,12 @@ In reverse, you can also access files in Vim sandbox from other apps, and from i
 
 Vim places a lock on each file as it opens it, and releases it every time the app goes in the background. To avoid surprises, all open files are saved every time the app goes in the background. Simply closing the file with `:w` does not release the lock (because Vim keeps the buffer available). If you really want to close the buffer and release the file, you have to use `:bd` (buffer delete). 
 
-### The Inbox folder
-This is a special folder. Files imported from other applications will be saved there. **Note that you cannot save to the Inbox folder manually**. In particular, if you import a file and make changes, then you *have* to save the new file somewhere outside the Inbox folder.
-
 ### Importing files from other applications
-If you wish, you can also pick ""Open in other app" from inside another application. In that case, te file will be copied to the `Inbox` folder inside the VimIOS sandbox. You will have to save it elsewhere. 
+From another app, if you click on "Share" or "Export", you can chose "Open in VimIOS". In that case, the file will also be opened in place, inside your other app sandbox. 
+
+If the other app does not support "Open-In-Place", the file will be copied to VimIOS  "Documents" folder. 
+
+Files copied from iTunes will also appear in the "Documents" folder, and you can copy them back. 
 
 ## Exporting files to other applications
 I added two commands to commands to Vim which allow you to export files.

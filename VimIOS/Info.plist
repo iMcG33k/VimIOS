@@ -12,12 +12,16 @@
 				<string>Icon-60@3x.png</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>Text File</string>
+			<string>Text file</string>
 			<key>LSHandlerRank</key>
-			<string>Alternate</string>
+			<string>Owner</string>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>public.text</string>
+				<string>public.source-code</string>
+				<string>public.plain-text</string>
+				<string>public.html</string>
+				<string>public.script</string>
 			</array>
 		</dict>
 	</array>

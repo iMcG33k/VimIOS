@@ -27,30 +27,84 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
     }
     
-    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-        var file:String
-        if (url.isFileURL) {
-            // Opens file in place:
-            file = url.path
-        } else {
-            // Path name can contain spaces
-            file = url.path.replacingOccurrences(of: " ", with: "\\ ")
-        }
-        let inputURL =  URL(fileURLWithPath: file)
+    
+    func uniqueFileName(_ application: UIApplication, target:URL) -> URL {
+        let ext = target.pathExtension
+        let basename = target.deletingPathExtension()
+        var nameSuffix = 1
+        var newTarget = target
         
-        guard inputURL.isFileURL else { return false }
-        let share = inputURL.startAccessingSecurityScopedResource()
-        if (!share) { return false }
-        let doc:UIDocument = UIDocument(fileURL: inputURL)
-        // Now the file is managed by vim
-        let command = "tabedit " + file
-        do_cmdline_cmd(command)
-        do_cmdline_cmd("redraw!")
-        do_cmdline_cmd("map <d-c> \"*y")
-        do_cmdline_cmd("map <d-v> \"*p")
-        return true
+        do {
+            while try newTarget.checkPromisedItemIsReachable() {
+                newTarget = URL(fileURLWithPath: basename.path + "-\(nameSuffix)." + ext)
+                nameSuffix += 1
+            }
+        } catch {
+            print("Could not create unique filename for ", target, " Error = ", [error .localizedDescription])
+            return URL(fileURLWithPath: "")
+        }
+        return newTarget
     }
     
+    
+    func application(_ app: UIApplication, open openURL: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        let shouldOpenInPlace:Bool = (options[UIApplicationOpenURLOptionsKey.openInPlace] != nil);
+        var newURL = openURL
+        if (openURL.scheme == "vim") {
+            // I need to change the URL scheme from vim:// to file://
+            var components = URLComponents(url: openURL, resolvingAgainstBaseURL: false)
+            components?.scheme = "file";
+            newURL = (components?.url)!
+            // This doesn't work because openURL contains permission flags
+            // But when it does, it'll be awesome
+        }
+        if (newURL.isFileURL) {
+            if (shouldOpenInPlace) {
+                if (newURL.startAccessingSecurityScopedResource()) {
+                    let vc:VimViewController = app.keyWindow?.rootViewController as! VimViewController
+                    vc.urls.append(newURL)
+                    let filename = newURL.path.replacingOccurrences(of: " ", with: "\\ ")
+                    // Now the file is managed by vim
+                    let command = "tabedit " + filename
+                    do_cmdline_cmd(command)
+                    do_cmdline_cmd("redraw!")
+                    do_cmdline_cmd("map <d-c> \"*y")
+                    do_cmdline_cmd("map <d-v> \"*p")
+                    return true
+                } else { return false }
+            }
+            // Can't open in place, so must import
+            // Can't test this on iOS 11 -- you either have permission or you don't
+            let uniquePath = uniqueFileName(app, target: newURL)
+            // Coordinate reading on the source path and writing on the destination path to copy.
+            let readIntent = NSFileAccessIntent.readingIntent(with: newURL, options: [])
+            let writeIntent = NSFileAccessIntent.writingIntent(with: uniquePath, options: .forReplacing)
+            let coordinationQueue = OperationQueue()
+            coordinationQueue.name = "com.applidium.vim-import.coordinationQueue"
+            NSFileCoordinator().coordinate(with: [readIntent, writeIntent], queue: coordinationQueue) { error in
+                if error != nil {
+                    return
+                }
+                do {
+                    try FileManager.default.copyItem(at: readIntent.url, to: writeIntent.url)
+                    let filename = writeIntent.url.path.replacingOccurrences(of: " ", with: "\\ ")
+                    // Now the file is managed by vim
+                    let command = "tabedit " + filename
+                    do_cmdline_cmd(command)
+                    do_cmdline_cmd("redraw!")
+                    do_cmdline_cmd("map <d-c> \"*y")
+                    do_cmdline_cmd("map <d-v> \"*p")
+                    return
+                }
+                catch {
+                    fatalError("Unexpected error during trivial file operations: \(error)")
+                }
+            }
+            return true
+        }
+        return false
+    }
+
     func VimStarter(_ url: URL?) {
         guard let vimPath = Bundle.main.resourcePath else {return}
         let runtimePath = vimPath + "/runtime"

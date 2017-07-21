@@ -592,7 +592,8 @@ class VimViewController: UIViewController, UIKeyInput, UIDocumentPickerDelegate,
         saveUrlBookmarks()
         for fileUrl in newUrls {
             fileUrl.startAccessingSecurityScopedResource()
-            let file = fileUrl.path
+            // paths can have spaces in them (they do if an app uses App Group).
+            let file = fileUrl.path.replacingOccurrences(of: " ", with: "\\ ")
             let command = "tabedit " + file
             do_cmdline_cmd(command)
             do_cmdline_cmd("redraw!")
