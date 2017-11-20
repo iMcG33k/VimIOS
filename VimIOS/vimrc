@@ -165,3 +165,6 @@ autocmd FileAppendPre      *.gz !mv <afile>:r <afile>
 autocmd FileAppendPost     *.gz !mv <afile> <afile>:r
 autocmd FileAppendPost     *.gz !gzip <afile>:r
 augroup END
+
+" SWNotes: Esc
+imap ` <Esc>

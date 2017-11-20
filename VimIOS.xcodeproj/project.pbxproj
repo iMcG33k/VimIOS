@@ -6481,7 +6481,7 @@
 				TargetAttributes = {
 					46BEBEE51BE0634800DF78C8 = {
 						CreatedOnToolsVersion = 7.1;
-						DevelopmentTeam = VG8Z23C8YL;
+						DevelopmentTeam = N328BC563N;
 						LastSwiftMigration = 0810;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
@@ -6787,7 +6787,7 @@
 				CODE_SIGN_ENTITLEMENTS = VimIOS/VimIOS.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = VG8Z23C8YL;
+				DEVELOPMENT_TEAM = N328BC563N;
 				GCC_PREFIX_HEADER = "${SRCROOT}/VimIOS/ios_prefix.h";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/**";
@@ -6799,7 +6799,7 @@
 					"$(PROJECT_DIR)/vim/src/xpm/x64/lib",
 					"$(PROJECT_DIR)/vim/src/xpm/x86/lib",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "Nicolas-Holzschuch-vim";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.naton.Nicolas-Holzschuch-vim";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_DISABLE_SAFETY_CHECKS = NO;
@@ -6817,7 +6817,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = VimIOS/VimIOS.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = VG8Z23C8YL;
+				DEVELOPMENT_TEAM = N328BC563N;
 				GCC_PREFIX_HEADER = "${SRCROOT}/VimIOS/ios_prefix.h";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/**";
@@ -6829,7 +6829,7 @@
 					"$(PROJECT_DIR)/vim/src/xpm/x64/lib",
 					"$(PROJECT_DIR)/vim/src/xpm/x86/lib",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "Nicolas-Holzschuch-vim";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.naton.Nicolas-Holzschuch-vim";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_DISABLE_SAFETY_CHECKS = NO;
